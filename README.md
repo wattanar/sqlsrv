@@ -1,5 +1,12 @@
-# sqlsrv
-
+# Install with composer
+```json
+{
+  "require" : {
+    "wattanar/sqlsrv" : "dev-master"
+  }
+}
+```
+# How to use
 ```php
 
 use Wattanar\Sqlsrv;
