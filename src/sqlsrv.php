@@ -6,119 +6,151 @@ class Sqlsrv
 {
 	public static function connect($server, $uid, $pwd, $dbname)
 	{
-		$connection = array( 
+		$settings = [
 			"Database" => "$dbname", 
 			"UID" => "$uid", 
 			"PWD" => "$pwd" ,
 			"CharacterSet" => "UTF-8",
 			"ReturnDatesAsStrings" => true,
 			"MultipleActiveResultSets" => true
-		);
+		];
 
-		return sqlsrv_connect($server, $connection);
-	}
-
-	public static function queryJson($connection, $query, $params = NULL)
-	{
-		if (!$params) {
-			$query = sqlsrv_query($connection, $query);	
-		} else {
-			$query = sqlsrv_query($connection, $query, $params);	
+		try {
+			$connect = sqlsrv_connect($server, $settings);
+		} catch (Exception $e) {
+			return false;
 		}
 
-		if ($query) {
-			$json = [];
-			while ($fetch = sqlsrv_fetch_object($query)) {
-				$json[] = $fetch;
+		return $connect;
+	}
+
+	public static function json($connection, $query, array $params = null)
+	{
+		if ($params === null) {
+
+			try {
+				$query = sqlsrv_query($connection, $query);	
+			} catch (Exception $e) {
+				return sqlsrv_errors();
 			}
-			return json_encode($json);
-		} else {
-			return;
-		}
-	}
 
-	public static function queryArrayObject($connection, $query, $params = NULL)
-	{
-		if (!$params) {
-			$query = sqlsrv_query($connection, $query);
 		} else {
-			$query = sqlsrv_query($connection, $query, $params);
-		}
 
-		if ($query) {
-			$array_object = [];
-			while ($fetch = sqlsrv_fetch_object($query)) {
-				$array_object[] = $fetch;
+			try {
+				$query = sqlsrv_query($connection, $query, $params);
+			} catch (Exception $e) {
+				return sqlsrv_errors();
 			}
-			return $array_object;
-		} else {
-			return;
+
 		}
+
+		$json = [];
+
+		while ($fetch = sqlsrv_fetch_object($query)) {
+			$json[] = $fetch;
+		}
+		
+		return json_encode($json);
 	}
 
-	public static function queryArray($connection, $query, $params = NULL)
+	public static function array($connection, $query, array $params = null)
 	{
-		if (!$params) {
-			$query = sqlsrv_query($connection, $query);
-		} else {
-			$query = sqlsrv_query($connection, $query, $params);
-		}
+		if ($params === null) {
 
-		if ($query) {
-			$array = [];
-			while ($fetch = sqlsrv_fetch_array($query)) {
-				$array[] = $fetch;
+			try {
+				$query = sqlsrv_query($connection, $query);
+			} catch (Exception $e) {
+				return sqlsrv_errors();
 			}
-			return $array;
+			
 		} else {
-			return;
+
+			try {
+				$query = sqlsrv_query($connection, $query, $params);
+			} catch (Exception $e) {
+				return sqlsrv_errors();
+			}
+
 		}
+
+		$array = [];
+
+		while ($fetch = sqlsrv_fetch_array($query)) {
+			$array[] = $fetch;
+		}
+
+		return $array;
 	}
 
-	public static function hasRows($connection, $query, $params = NULL)
+	public static function hasRows($connection, $query, array $params = null)
 	{
-		if (!$params) {
-			$query = sqlsrv_has_rows(sqlsrv_query(
-				$connection,
-				$query
-			));
+		if ($params === null) {
+
+			try {
+				$query = sqlsrv_has_rows(sqlsrv_query(
+					$connection,
+					$query
+				));
+			} catch (Exception $e) {
+				return sqlsrv_errors();
+			}
+
 		} else {
-			$query = sqlsrv_has_rows(sqlsrv_query(
-				$connection,
-				$query,
-				$params
-			));
+
+			try {
+				$query = sqlsrv_has_rows(sqlsrv_query(
+					$connection,
+					$query,
+					$params
+				));
+			} catch (Exception $e) {
+				return sqlsrv_errors();
+			}
+
 		}
+
 		return $query;
 	}
 
-	public static function insert($connection, $query, $params = NULL)
+	public static function query($connection, $query, array $params = null)
 	{
-		if (!$params) {
-			$query = sqlsrv_query($connection, $query);
+		if ($params === null) {
+			
+			try {
+				$query = sqlsrv_query($connection, $query);
+			} catch (Exception $e) {
+				return sqlsrv_errors();
+			}
+
 		} else {
-			$query = sqlsrv_query($connection, $query, $params);
+			
+			try {
+				$query = sqlsrv_query($connection, $query, $params);
+			} catch (Exception $e) {
+				return sqlsrv_errors();
+			}
+
 		}
+
 		return $query;
 	}
 
-	public static function update($connection, $query, $params = NULL)
+	public static function begin($connection)
 	{
-		if (!$params) {
-			$query = sqlsrv_query($connection, $query);
+		if (sqlsrv_begin_transaction($connection) === false) {
+			return false;
 		} else {
-			$query = sqlsrv_query($connection, $query, $params);
+			return true;
 		}
-		return $query;
 	}
 
-	public static function delete($connection, $query, $params = NULL)
+	public static function commit($connection)
 	{
-		if (!$params) {
-			$query = sqlsrv_query($connection, $query);
-		} else {
-			$query = sqlsrv_query($connection, $query, $params);
-		}
-		return $query;
+		return sqlsrv_commit($connection);
+	}
+
+	public static function rollback($connection)
+	{
+		return sqlsrv_rollback($connection);
 	}
 }
