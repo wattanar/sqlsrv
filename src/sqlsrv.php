@@ -24,35 +24,6 @@ class Sqlsrv
 		return $connect;
 	}
 
-	public static function json($connection, $query, array $params = null)
-	{
-		if ($params === null) {
-
-			try {
-				$query = sqlsrv_query($connection, $query);	
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-
-		} else {
-
-			try {
-				$query = sqlsrv_query($connection, $query, $params);
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-
-		}
-
-		$json = [];
-
-		while ($fetch = sqlsrv_fetch_object($query)) {
-			$json[] = $fetch;
-		}
-		
-		return json_encode($json);
-	}
-
 	public static function array($connection, $query, array $params = null)
 	{
 		if ($params === null) {
@@ -74,12 +45,17 @@ class Sqlsrv
 		}
 
 		$array = [];
+		$object = [];
 
-		while ($fetch = sqlsrv_fetch_array($query)) {
+		while ($fetch = sqlsrv_fetch_object($query)) {
 			$array[] = $fetch;
 		}
 
-		return $array;
+		foreach ($array as $value) {
+			$object[] = $value;
+		}
+
+		return $object;
 	}
 
 	public static function hasRows($connection, $query, array $params = null)
