@@ -4,85 +4,55 @@ namespace Wattanar;
 
 class Sqlsrv
 {
-	public static function connect($server, $uid, $pwd, $dbname)
+	public static function connect($server, $username, $password, $database)
 	{
 		$settings = [
-			"Database" => "$dbname", 
-			"UID" => "$uid", 
-			"PWD" => "$pwd" ,
+			"Database" => "$database", 
+			"UID" => "$username", 
+			"PWD" => "$password" ,
 			"CharacterSet" => "UTF-8",
 			"ReturnDatesAsStrings" => true,
 			"MultipleActiveResultSets" => true
 		];
 
-		try {
-			$connect = sqlsrv_connect($server, $settings);
-		} catch (Exception $e) {
-			return false;
-		}
-
-		return $connect;
+		return sqlsrv_connect($server, $settings);
 	}
 
 	public static function array($connection, $query, array $params = null)
 	{
 		if ($params === null) {
-
-			try {
-				$query = sqlsrv_query($connection, $query);
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-			
+			$query = sqlsrv_query($connection, $query);			
 		} else {
-
-			try {
-				$query = sqlsrv_query($connection, $query, $params);
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-
+			$query = sqlsrv_query($connection, $query, $params);
 		}
 
 		$array = [];
-		$object = [];
+		$rows = [];
 
 		while ($fetch = sqlsrv_fetch_object($query)) {
 			$array[] = $fetch;
 		}
 
 		foreach ($array as $value) {
-			$object[] = $value;
+			$rows[] = $value;
 		}
 
-		return $object;
+		return $rows;
 	}
 
 	public static function hasRows($connection, $query, array $params = null)
 	{
 		if ($params === null) {
-
-			try {
-				$query = sqlsrv_has_rows(sqlsrv_query(
-					$connection,
-					$query
-				));
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-
+			$query = sqlsrv_has_rows(sqlsrv_query(
+				$connection,
+				$query
+			));
 		} else {
-
-			try {
-				$query = sqlsrv_has_rows(sqlsrv_query(
-					$connection,
-					$query,
-					$params
-				));
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-
+			$query = sqlsrv_has_rows(sqlsrv_query(
+				$connection,
+				$query,
+				$params
+			));
 		}
 
 		return $query;
@@ -91,21 +61,9 @@ class Sqlsrv
 	public static function query($connection, $query, array $params = null)
 	{
 		if ($params === null) {
-			
-			try {
-				$query = sqlsrv_query($connection, $query);
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-
+			$query = sqlsrv_query($connection, $query);
 		} else {
-			
-			try {
-				$query = sqlsrv_query($connection, $query, $params);
-			} catch (Exception $e) {
-				return sqlsrv_errors();
-			}
-
+			$query = sqlsrv_query($connection, $query, $params);
 		}
 
 		return $query;
