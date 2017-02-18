@@ -71,11 +71,7 @@ class Sqlsrv
 
 	public static function begin($connection)
 	{
-		if (sqlsrv_begin_transaction($connection) === false) {
-			return false;
-		} else {
-			return true;
-		}
+		return sqlsrv_begin_transaction($connection);
 	}
 
 	public static function commit($connection)
