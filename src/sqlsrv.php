@@ -18,7 +18,7 @@ class Sqlsrv
 		return sqlsrv_connect($server, $settings);
 	}
 
-	public static function array($connection, $query, array $params = null)
+	public static function fetch($connection, $query, array $params = null)
 	{
 		if ($params === null) {
 			$query = sqlsrv_query($connection, $query);			
