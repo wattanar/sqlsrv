@@ -18,7 +18,7 @@ class Sqlsrv
 		return sqlsrv_connect($server, $settings);
 	}
 
-	public static function fetch($connection, $query, array $params = null)
+	public static function rows($connection, $query, array $params = null)
 	{
 		if ($params === null) {
 			$query = sqlsrv_query($connection, $query);			
@@ -29,7 +29,7 @@ class Sqlsrv
 		$array = [];
 		$rows = [];
 
-		while ($fetch = sqlsrv_fetch_object($query)) {
+		while ($fetch = sqlsrv_fetch_array($query)) {
 			$array[] = $fetch;
 		}
 
@@ -54,7 +54,6 @@ class Sqlsrv
 				$params
 			));
 		}
-
 		return $query;
 	}
 
@@ -65,22 +64,6 @@ class Sqlsrv
 		} else {
 			$query = sqlsrv_query($connection, $query, $params);
 		}
-
 		return $query;
-	}
-
-	public static function begin($connection)
-	{
-		return sqlsrv_begin_transaction($connection);
-	}
-
-	public static function commit($connection)
-	{
-		return sqlsrv_commit($connection);
-	}
-
-	public static function rollback($connection)
-	{
-		return sqlsrv_rollback($connection);
 	}
 }
