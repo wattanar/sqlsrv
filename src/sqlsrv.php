@@ -12,7 +12,8 @@ class Sqlsrv
 			"PWD" => "$password" ,
 			"CharacterSet" => "UTF-8",
 			"ReturnDatesAsStrings" => true,
-			"MultipleActiveResultSets" => true
+			"MultipleActiveResultSets" => true,
+			"ConnectionPooling" => true
 		];
 
 		return sqlsrv_connect($server, $settings);
