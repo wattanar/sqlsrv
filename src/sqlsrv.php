@@ -27,17 +27,12 @@ class Sqlsrv
 			$query = sqlsrv_query($connection, $query, $params);
 		}
 
-		$array = [];
 		$rows = [];
 
-		while ($fetch = sqlsrv_fetch_array($query)) {
-			$array[] = $fetch;
+		while ($nextRow = sqlsrv_fetch_array($query, SQLSRV_FETCH_ASSOC)) {
+			$rows[] = $nextRow;
 		}
-
-		foreach ($array as $value) {
-			$rows[] = $value;
-		}
-
+		
 		return $rows;
 	}
 
