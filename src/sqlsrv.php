@@ -16,7 +16,12 @@ class Sqlsrv
 			"ConnectionPooling" => true
 		];
 
-		return sqlsrv_connect($server, $settings);
+		$conn = sqlsrv_connect($server, $settings);
+
+		if ( false === $conn) {
+			throw new \Exception("Unable to connect database.", 1);
+		}
+		return $conn;
 	}
 
 	public static function rows($connection, $query, array $params = null)
